@@ -13,7 +13,7 @@
 
 #mainContent {
     display: flex;
-    background-color: gray;
+    background-color: black;
     flex-wrap: wrap;
     width: 496px;
     height: 256px;
