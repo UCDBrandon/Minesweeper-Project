@@ -13,6 +13,7 @@ var MinesweeperGame = function (row, col, numBombs) {
     this.tileCoords = [],
     this.boardGenerated = false,
     this.bombsAssigned = false,
+    this.visited = [],
     this.difficulty = "Expert"
 }
 
@@ -21,6 +22,7 @@ MinesweeperGame.prototype.newGame = function () {
     if (this.boardGenerated === false) {
         this.generateGame();
     }
+
     //this.clearBoard();
     //this.assignBombs();
 }
@@ -74,13 +76,13 @@ MinesweeperGame.prototype.assignBombs = function (x, y) {
         //Also ensures that first click is not a bomb
         while (this.tileCoords[xCoord][yCoord] === 1 ||
             (xCoord === x && yCoord === y) ||
+            (xCoord === x && yCoord === (y - 1)) ||
+            (xCoord === x && yCoord === (y + 1)) ||
             (xCoord === (x - 1) && yCoord === (y - 1)) ||
-            (xCoord === (x - 1) && yCoord === (y)) ||
+            (xCoord === (x - 1) && yCoord === y) ||
             (xCoord === (x - 1) && yCoord === (y + 1)) ||
-            (xCoord === (x) && yCoord === (y - 1)) ||
-            (xCoord === (x) && yCoord === (y + 1)) ||
             (xCoord === (x + 1) && yCoord === (y - 1)) ||
-            (xCoord === (x + 1) && yCoord === (y)) ||
+            (xCoord === (x + 1) && yCoord === y) ||
             (xCoord === (x + 1) && yCoord === (y + 1))) {
 
             xCoord = Math.floor(Math.random() * this.row);
@@ -89,13 +91,14 @@ MinesweeperGame.prototype.assignBombs = function (x, y) {
         this.tileCoords[xCoord][yCoord] = 1;
 
     }
+    this.tileAccess = document.querySelectorAll(".tile");
     this.bombsAssigned = true;
 }
 
 //This function deals with revealing a tile and finding out how many
 //bombs are next to the revealed tile. The revealed tile will have a 
 //new image based on how many bombs are next to the tile.
-MinesweeperGame.prototype.revealTileSafe = function (x, y, tileImage) {
+MinesweeperGame.prototype.revealTileSafe = function (x, y) {
     var bombCount = 0;
 
     //Check for all possible cases
@@ -236,7 +239,10 @@ MinesweeperGame.prototype.revealTileSafe = function (x, y, tileImage) {
             bombCount++;
         }
     }
+
+    tileImage = this.tileAccess[30 * x + x + y].children[0];
     tileImage.src = "http://www.chezpoor.com/minesweeper/images/open" + bombCount + ".gif";
+    return bombCount;
 }
 
 //tile function constructor
@@ -263,22 +269,37 @@ function generateTile(x, y) {
         if (game.bombsAssigned == false) {
             game.assignBombs(x, y);
         }
-        bombCheck(x, y, tileImage);
+        bombCheck(x, y, true);
     });
 
     return emptyTile;
 }
 
 //This function is called whenever a tile is clicked
-function bombCheck(x,y, tileImage) {
-    if (game.tileCoords[x][y] === 1) {
+function bombCheck(x, y, typeCheck) {
+    if (game.tileCoords[x][y] === 1 && typeCheck === true) {
         console.log("lose");
     } else {
-        game.revealTileSafe(x, y, tileImage);
+        let count = game.revealTileSafe(x, y);
+
+        if (count === 0){
+            bombCheck(x - 1, y - 1, false);
+            bombCheck(x - 1, y, false);
+            bombCheck(x - 1, y + 1, false);
+            bombCheck(x, y - 1, false);
+            bombCheck(x, y + 1, false);
+            bombCheck(x + 1, y - 1, false);
+            bombCheck(x + 1, y, false);
+            bombCheck(x + 1, y + 1, false);
+            
+        }
     }
 }
 
 
 var game = new MinesweeperGame(16, 31, 99);
 game.newGame();
+
+t = document.querySelectorAll(".tile");
+
 
