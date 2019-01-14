@@ -6,29 +6,25 @@
 
 
 //MinesweeperGame functions and constructor
-var MinesweeperGame = function (row, col, numBombs) {
-    this.row = row,
-    this.col = col,
-    this.numBombs = numBombs,
-    this.tileCoords = [],
-    this.boardGenerated = false,
-    this.bombsAssigned = false,
-    this.visited = [],
-    this.difficulty = "Expert"
+/*var MinesweeperGame = function (row, col, numBombs) {
+    this.row = row;
+    this.col = col;
+    this.numBombs = numBombs;
+    this.tileCoords = [];
+    this.boardGenerated = false;
+    this.bombsAssigned = false;
+    this.difficulty = "Expert";
 }
 
 //This function is called whenever a new game is initiated
-MinesweeperGame.prototype.newGame = function () {
+MinesweeperGame.prototype.newGame = function (b) {
     if (this.boardGenerated === false) {
-        this.generateGame();
+        this.generateGame(b);
     }
-
-    //this.clearBoard();
-    //this.assignBombs();
 }
 
 //This function sets up the game by creating the board. Only called once to generate the tiles.
-MinesweeperGame.prototype.generateGame = function () {
+MinesweeperGame.prototype.generateGame = function (b) {
     //Setup the board and 2D array used to hold bombs
     var content = document.getElementById("mainContent");
 
@@ -37,17 +33,17 @@ MinesweeperGame.prototype.generateGame = function () {
         this.tileCoords.push([]);
         for (var j = 0; j < this.col; j++) {
             var emptyTile = new tile(i, j, this.tileCoords[i]);
-
             content.appendChild(emptyTile.tileElement);
             this.tileCoords[i].push([]);
             this.tileCoords[i][j] = 0;
+            b.push(emptyTile);
         }
     }
     this.boardGenerated = true;
 }
 
 //This function is used to reset the board back to the default stage.
-/*MinesweeperGame.prototype.clearBoard = function () {
+MinesweeperGame.prototype.clearBoard = function () {
     //Clear the board followed by simply replacing the images.
     var content = document.getElementById("mainContent");
     for (let i = 0; i < this.row * this.col; i++) {
@@ -60,7 +56,7 @@ MinesweeperGame.prototype.generateGame = function () {
             this.tileCoords[i][j] = 0;
         }
     }
-}*/
+}
 
 //This function assigns the bombs to certain tiles
 MinesweeperGame.prototype.assignBombs = function (x, y) {
@@ -247,9 +243,10 @@ MinesweeperGame.prototype.revealTileSafe = function (x, y) {
 
 //tile function constructor
 var tile = function (x, y, bombArr) {
-    this.x = x,
-    this.y = y,
+    this.x = x;
+    this.y = y;
     this.tileElement = generateTile(this.x, this.y);
+    this.visited = false;
 }
 
 //This function makes the tile element
@@ -295,11 +292,139 @@ function bombCheck(x, y, typeCheck) {
         }
     }
 }
-
-
 var game = new MinesweeperGame(16, 31, 99);
-game.newGame();
 
-t = document.querySelectorAll(".tile");
+game.newGame(b);
+console.log(b);*/
+
+var gameRules = (function () {
+
+
+
+
+    return {
+        bombCheck: function (x, y, arr) {
+
+        }
+    }
+
+})();
+
+var gameSetupController = (function () {
+    var bombsSet = false;
+
+    var makeTiles = function (game) {
+        var tile = function (x, y) {
+            this.x = x;
+            this.y = y;
+            this.visited = false;
+        }
+
+        var arr = [];
+        var content = document.getElementById("mainContent");
+
+        for (var x = 0; x < game.row; x++) {
+            game.tileCoords.push([])
+            for (var y = 0; y < game.col; y++) {
+                var t = new tile(x, y);
+                t.ele = generateTileElement(x, y, arr, game);
+                content.appendChild(t.ele);
+                arr.push(t);
+                game.tileCoords[x].push([]);
+                game.tileCoords[x][y] = 0;
+            }
+        }
+        return arr;
+    }
+
+    function generateTileElement(x, y, arr, game) {
+        //Generate a tile element for each space in the minesweeper board
+        var emptyTile = document.createElement("div");
+        var tileImage = document.createElement("img");
+
+        //Make the tile undraggable so button click up responds to tile where cursor is on
+        tileImage.setAttribute('draggable', false);
+        emptyTile.classList.add("tile");
+        tileImage.src = "images/unopened.png";
+        emptyTile.appendChild(tileImage);
+
+        //Event listener for mouseup to check whether tile is a bomb
+        emptyTile.addEventListener("mouseup", function () {
+            if (game.bombsAssigned === false) {
+               game.bombsAssigned = assignBombs(x, y, game);
+            }
+            //Implement rules portion here
+            console.log(arr);
+            if (arr[31 * x + y].visited !== true) {
+                var count = bombCheck(x, y, arr);
+            } else {
+                arr[31 * x + y].visited = false;
+                var count = bombCheck(x, y, arr);
+            }
+            
+        });
+
+        return emptyTile;
+    }
+
+    function assignBombs (x, y, game) {
+        var xCoord;
+        var yCoord;
+
+        //Assign random bomb coordinates
+        for (var i = 0; i < game.numBombs; i++) {
+            xCoord = Math.floor(Math.random() * game.row);
+            yCoord = Math.floor(Math.random() * game.col);
+
+            //Check to make sure bomb positions are not repeated
+            //Also ensures that first click is not a bomb
+            while (game.tileCoords[xCoord][yCoord] === 1 ||
+                (xCoord === x && yCoord === y) ||
+                (xCoord === x && yCoord === (y - 1)) ||
+                (xCoord === x && yCoord === (y + 1)) ||
+                (xCoord === (x - 1) && yCoord === (y - 1)) ||
+                (xCoord === (x - 1) && yCoord === y) ||
+                (xCoord === (x - 1) && yCoord === (y + 1)) ||
+                (xCoord === (x + 1) && yCoord === (y - 1)) ||
+                (xCoord === (x + 1) && yCoord === y) ||
+                (xCoord === (x + 1) && yCoord === (y + 1))) {
+
+                xCoord = Math.floor(Math.random() * game.row);
+                yCoord = Math.floor(Math.random() * game.col);
+            }
+            game.tileCoords[xCoord][yCoord] = 1;
+        }
+        console.log(game.tileCoords);
+        return true;
+    }
+
+    return {
+        tileCreate: function (game) {
+            board = makeTiles(game);
+
+            return board;
+        }
+    }
+
+})();
+
+var controller = (function (gsCtrl) {
+    var MinesweeperGame = function (row, col, numBombs) {
+        this.row = row;
+        this.col = col;
+        this.numBombs = numBombs;
+        this.tileCoords = [];
+        this.bombsAssigned = false;
+        this.difficulty = "Expert";
+    }
+
+    var game = new MinesweeperGame(16, 31, 99)
+
+    var b = gsCtrl.tileCreate(game);
+    console.log(b);
+
+
+})(gameSetupController);
+
 
 
