@@ -68,6 +68,15 @@
     <AppxManifest Include="package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="images\open0.gif" />
+    <Content Include="images\open1.gif" />
+    <Content Include="images\open2.gif" />
+    <Content Include="images\open3.gif" />
+    <Content Include="images\open4.gif" />
+    <Content Include="images\open5.gif" />
+    <Content Include="images\open6.gif" />
+    <Content Include="images\open7.gif" />
+    <Content Include="images\open8.gif" />
     <Content Include="images\unopened.png" />
     <Content Include="index.html" />
     <Content Include="images\LockScreenLogo.scale-200.png" />

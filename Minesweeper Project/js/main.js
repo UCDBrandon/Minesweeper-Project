@@ -159,7 +159,7 @@ var gameRules = (function () {
             }
         }
         tileImage = game.tileCoords[x][y].tile.ele.children[0]
-        tileImage.src = "https://github.com/UCDBrandon/Minesweeper-Project/tree/master/Minesweeper%20Project/images/open" + bombCount + ".gif";
+        //tileImage.src = "images/open" + bombCount + ".gif";
         return bombCount;
     }
 
