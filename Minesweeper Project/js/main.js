@@ -264,13 +264,18 @@ var gameSetupController = (function (gRules) {
         emptyTile.appendChild(tileImage);
 
         //Event listener for mouseup to check whether tile is a bomb
-        emptyTile.addEventListener("mouseup", function () {
-            if (game.bombsAssigned === false) {
-               game.bombsAssigned = assignBombs(x, y, game);
+        emptyTile.addEventListener("mouseup", function (e) {
+            
+            if (e.button === 0) {
+                if (game.bombsAssigned === false) {
+                    game.bombsAssigned = assignBombs(x, y, game);
+                }
+                gRules.bombCheck(x, y, game);
+            } else if (e.button === 2) {
+                //Add flagging here
+                console.log("right click");
             }
-            //Implement rules portion here
-
-            gRules.bombCheck(x, y, game);
+            
             
         });
 
