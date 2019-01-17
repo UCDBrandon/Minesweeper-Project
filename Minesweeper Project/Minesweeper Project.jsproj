@@ -68,6 +68,7 @@
     <AppxManifest Include="package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="images\bombflagged.gif" />
     <Content Include="images\open0.gif" />
     <Content Include="images\open1.gif" />
     <Content Include="images\open2.gif" />
