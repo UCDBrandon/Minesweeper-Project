@@ -246,7 +246,8 @@ var gameSetupController = (function (gRules) {
                 game.tileCoords[x][y] = {
                     tile: t,
                     isBomb: 0,
-                    visited: false
+                    visited: false,
+                    flagged: false
                 };
             }
         }
@@ -260,7 +261,7 @@ var gameSetupController = (function (gRules) {
         //Make the tile undraggable so button click up responds to tile where cursor is on
         tileImage.setAttribute('draggable', false);
         emptyTile.classList.add("tile");
-        tileImage.src = "images/unopened.png";
+        tileImage.src = "images/unopened.gif";
         emptyTile.appendChild(tileImage);
 
         //Event listener for mouseup to check whether tile is a bomb
@@ -273,6 +274,19 @@ var gameSetupController = (function (gRules) {
                 gRules.bombCheck(x, y, game);
             } else if (e.button === 2) {
                 //Add flagging here
+                if (game.tileCoords[x][y].visited != true) {
+                    var img = game.tileCoords[x][y].tile.ele.children[0];
+                    if (game.tileCoords[x][y].flagged === false) {
+                        //Tile is not marked with a flag
+                        game.tileCoords[x][y].flagged = true;
+                        img.src = "images/bombflagged.gif";
+                    } else {
+                        game.tileCoords[x][y].flagged = false;
+                        img.src = "images/unopened.gif";
+                    }
+                }
+                
+                console.log(game.tileCoords[x][y].flagged);
                 console.log("right click");
             }
             

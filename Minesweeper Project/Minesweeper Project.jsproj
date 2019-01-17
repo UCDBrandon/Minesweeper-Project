@@ -78,7 +78,7 @@
     <Content Include="images\open6.gif" />
     <Content Include="images\open7.gif" />
     <Content Include="images\open8.gif" />
-    <Content Include="images\unopened.png" />
+    <Content Include="images\unopened.gif" />
     <Content Include="index.html" />
     <Content Include="images\LockScreenLogo.scale-200.png" />
     <Content Include="images\SplashScreen.scale-200.png" />
